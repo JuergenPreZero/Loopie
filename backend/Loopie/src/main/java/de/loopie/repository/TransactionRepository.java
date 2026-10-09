@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
-
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.user.id = :userId")
     Integer sumAmountByUserId(@Param("userId") int userId);
 }

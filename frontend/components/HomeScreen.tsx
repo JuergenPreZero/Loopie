@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { fetchTotalQuantity } from './api';
 
 export default function HomeScreen() {
-  const [number, setNumber] = useState(0);
+  const [number, setNumber] = useState<number>(0);
 
+  const currentUserId = 1; //Hardcoded UserID!!
+
+  useEffect(() => {
+    const loadQuantity = async () => {
+      try {
+        const data = await fetchTotalQuantity(currentUserId);
+        setNumber(data);
+      } catch (error) {
+        console.error("Polling-Fehler:", error);
+      }
+    };
+
+    loadQuantity();
+    const intervalId = setInterval(loadQuantity, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <View style={styles.container}>
-      <Text style={styles.blackText}>Menge: {number}</Text>
-      <TouchableOpacity style={styles.button} onPress={() => setNumber(number + 1)}>
-        <Text style={styles.whiteText}>+1</Text>
-      </TouchableOpacity>
+      <Text style={styles.blackText}>Menge: {number}</Text> 
     </View> 
   );
 }
