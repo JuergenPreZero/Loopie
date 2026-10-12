@@ -19,11 +19,26 @@ public class User {
     @Column(nullable = false,length = 50)
     private String lastName;
 
+    @Column(nullable = false)
+    private int age;
+
+    @Column(nullable = false, length = 255)
+    private String address;
+
     @Column(nullable = false,length = 100,unique = true)
     private String email;
 
     @Column(nullable = false, precision = 10,scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
+
+    @Column(nullable = false,length = 100)
+    private String password;
+
+    @Column(length = 10)
+    private String oneTimeCode;
+
+    @Column(nullable = false)
+    private boolean isVerified = false;
 
     public User() {}
 
@@ -51,6 +66,22 @@ public class User {
         this.lastName = lastName;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -65,5 +96,29 @@ public class User {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getOneTimeCode() {
+        return oneTimeCode;
+    }
+
+    public void setOneTimeCode(String oneTimeCode) {
+        this.oneTimeCode = oneTimeCode;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 }
