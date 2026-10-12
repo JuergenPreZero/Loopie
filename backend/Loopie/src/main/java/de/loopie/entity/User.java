@@ -3,6 +3,9 @@ package de.loopie.entity;
 import jakarta.persistence.*;
 import  java.math.BigDecimal;
 
+/**
+ * Users entity, explains the structure of Users table.
+ */
 @Entity
 @Table(name = "users")
 public class User {

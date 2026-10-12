@@ -6,6 +6,9 @@ import de.loopie.service.LoopieService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST-Controller for the main functions of the application.
+ */
 @RestController
 @RequestMapping("/api/loopie")
 @CrossOrigin(origins = "*")
@@ -17,11 +20,21 @@ public class LoopieController {
         this.loopieService = loopieService;
     }
 
+    /**
+     * Endpoint for calling USERS current amount of items.
+     * @param userId An ID meant to identify USER.
+     * @return HTTP 200 OK with the amount.
+     */
     @GetMapping("/quantity/{userId}")
     public ResponseEntity<Integer> getQuantity(@PathVariable int userId) {
         return ResponseEntity.ok(loopieService.getTotalQuantity(userId));
     }
 
+    /**
+     * Endpoint for registering when a throwIn of any kind has happened.
+     * @param request Data object send by iot
+     * @return HTTP 200 OK with the save data {@link Transaction}
+     */
     @PostMapping("/throw-in")
     public ResponseEntity<Transaction> registerThrowIn(@RequestBody ThrowInRequest request) {
         Transaction savedTransaction = loopieService.processThrowIn(request);

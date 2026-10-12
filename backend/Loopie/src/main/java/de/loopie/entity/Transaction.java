@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+/**
+ * Transactions entity, explains the structure of the transactions table
+ */
 @Entity
 @Table(name = "transactions")
 public class Transaction {

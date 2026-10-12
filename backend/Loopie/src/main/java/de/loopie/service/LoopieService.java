@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * Main Service for Loopie, handles transactional logic.
+ */
 @Service
 public class LoopieService {
     private final TransactionRepository transactionRepository;
@@ -18,7 +21,7 @@ public class LoopieService {
 
     private static final Map<String, BigDecimal> unitPrices = Map.of(
             "TennisBall", new BigDecimal("0.20"),
-            "Example", new BigDecimal("0.20")
+            "Example", new BigDecimal("0.50")
     );
 
     public LoopieService(TransactionRepository transactionRepository, UserRepository userRepository) {
@@ -26,11 +29,22 @@ public class LoopieService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Gets the total amount of all the units summed by userid.
+     * @param userId An ID meant to identify USER.
+     * @return returns USER total amount of items.
+     */
     public int getTotalQuantity(int userId) {
         Integer total = transactionRepository.sumAmountByUserId(userId);
         return total != null ? total : 0;
     }
 
+    /**
+     * Checks for existing User and valid UnitID. Calculates the total value.
+     * saves values persistently.
+     * @param request Data object send by iot
+     * @return the transactional entity {@link Transaction}.
+     */
     @Transactional
     public Transaction processThrowIn(ThrowInRequest request) {
         User user = userRepository.findById(request.getUserId())
@@ -40,7 +54,7 @@ public class LoopieService {
             throw new IllegalArgumentException("Unit ID "+ request.getUnitId() + " does not exist");
         }
 
-
+        //Calculate total value of item(s)
         BigDecimal unitPrice = unitPrices.getOrDefault(request.getUnitId(), BigDecimal.ZERO);
         BigDecimal totalValue = unitPrice.multiply(new BigDecimal(request.getAmount()));
 

@@ -1,5 +1,8 @@
 package de.loopie.dto;
 
+/**
+ *Data transfer object for the incoming throw in requests of the IoT.
+ */
 public class ThrowInRequest {
     private int userId;
     private int amount;
