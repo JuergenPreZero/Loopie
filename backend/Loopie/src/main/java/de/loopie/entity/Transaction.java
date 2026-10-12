@@ -22,7 +22,7 @@ public class Transaction {
     private BigDecimal value;
 
     @Column(nullable = false)
-    private String deviceId;
+    private String unitId;
 
     @org.hibernate.annotations.CreationTimestamp
     @Column(nullable = false)
@@ -39,12 +39,12 @@ public class Transaction {
         this.timeStamp = timeStamp;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public String getUnitId() {
+        return unitId;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setUnitId(String unitId) {
+        this.unitId = unitId;
     }
 
     public BigDecimal getValue() {

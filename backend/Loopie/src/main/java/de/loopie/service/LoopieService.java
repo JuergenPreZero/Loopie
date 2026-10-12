@@ -8,10 +8,18 @@ import de.loopie.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 @Service
 public class LoopieService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
+
+    private static final Map<String, BigDecimal> unitPrices = Map.of(
+            "TennisBall", new BigDecimal("0.20"),
+            "Example", new BigDecimal("0.20")
+    );
 
     public LoopieService(TransactionRepository transactionRepository, UserRepository userRepository) {
         this.transactionRepository = transactionRepository;
@@ -24,15 +32,19 @@ public class LoopieService {
     }
 
     @Transactional
-    public Transaction processThrowIn(ThrowInRequest data) {
-        User user = userRepository.findById(data.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User nicht gefunden mit ID: " + data.getUserId()));
+    public Transaction processThrowIn(ThrowInRequest request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User nicht gefunden mit ID: " + request.getUserId()));
+
+        BigDecimal unitPrice = unitPrices.getOrDefault(request.getUnitId(), BigDecimal.ZERO);
+        BigDecimal totalValue = unitPrice.multiply(new BigDecimal(request.getAmount()));
 
         Transaction transaction = new Transaction();
         transaction.setUser(user);
-        transaction.setAmount(data.getAmount());
-        transaction.setValue(data.getValue());
-        transaction.setDeviceId(data.getDeviceId());
+        transaction.setAmount(request.getAmount());
+        transaction.setValue(totalValue);
+
+        transaction.setUnitId(request.getUnitId() != null ? request.getUnitId() : "UNKNOWN_UNIT");
 
         return transactionRepository.save(transaction);
     }
