@@ -39,6 +39,11 @@ public class LoopieService {
         return total != null ? total : 0;
     }
 
+    public User getUserById(int userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User "+ userId + " not found"));
+    }
+
     /**
      * Checks for existing User and valid UnitID. Calculates the total value.
      * saves values persistently.
@@ -62,7 +67,6 @@ public class LoopieService {
         transaction.setUser(user);
         transaction.setAmount(request.getAmount());
         transaction.setValue(totalValue);
-
         transaction.setUnitId(request.getUnitId());
 
         return transactionRepository.save(transaction);

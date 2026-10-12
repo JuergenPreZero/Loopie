@@ -2,9 +2,12 @@ package de.loopie.controller;
 
 import de.loopie.dto.ThrowInRequest;
 import de.loopie.entity.Transaction;
+import de.loopie.entity.User;
 import de.loopie.service.LoopieService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 /**
  * REST-Controller for the main functions of the application.
@@ -28,6 +31,12 @@ public class LoopieController {
     @GetMapping("/quantity/{userId}")
     public ResponseEntity<Integer> getQuantity(@PathVariable int userId) {
         return ResponseEntity.ok(loopieService.getTotalQuantity(userId));
+    }
+
+    @GetMapping("/balance/{userId}")
+    public ResponseEntity<BigDecimal> getBalance(@PathVariable int userId) {
+        User user =loopieService.getUserById(userId);
+        return ResponseEntity.ok(user.getBalance());
     }
 
     /**
