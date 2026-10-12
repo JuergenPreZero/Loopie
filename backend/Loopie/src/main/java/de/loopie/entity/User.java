@@ -2,6 +2,7 @@ package de.loopie.entity;
 
 import jakarta.persistence.*;
 import  java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * Users entity, explains the structure of Users table.
@@ -10,8 +11,8 @@ import  java.math.BigDecimal;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false,length = 50)
     private String firstName;
@@ -42,11 +43,11 @@ public class User {
 
     public User() {}
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
