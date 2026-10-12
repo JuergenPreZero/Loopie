@@ -34,7 +34,12 @@ public class LoopieService {
     @Transactional
     public Transaction processThrowIn(ThrowInRequest request) {
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User nicht gefunden mit ID: " + request.getUserId()));
+                .orElseThrow(() -> new IllegalArgumentException("User " + request.getUserId() + " not found"));
+
+        if (request.getUnitId() == null || !unitPrices.containsKey(request.getUnitId())) {
+            throw new IllegalArgumentException("Unit ID "+ request.getUnitId() + " does not exist");
+        }
+
 
         BigDecimal unitPrice = unitPrices.getOrDefault(request.getUnitId(), BigDecimal.ZERO);
         BigDecimal totalValue = unitPrice.multiply(new BigDecimal(request.getAmount()));
@@ -44,7 +49,7 @@ public class LoopieService {
         transaction.setAmount(request.getAmount());
         transaction.setValue(totalValue);
 
-        transaction.setUnitId(request.getUnitId() != null ? request.getUnitId() : "UNKNOWN_UNIT");
+        transaction.setUnitId(request.getUnitId());
 
         return transactionRepository.save(transaction);
     }
