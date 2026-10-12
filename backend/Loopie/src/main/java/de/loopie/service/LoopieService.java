@@ -63,6 +63,11 @@ public class LoopieService {
         BigDecimal unitPrice = unitPrices.getOrDefault(request.getUnitId(), BigDecimal.ZERO);
         BigDecimal totalValue = unitPrice.multiply(new BigDecimal(request.getAmount()));
 
+        //adds amount of transaction to total balance
+        BigDecimal currentBalance = user.getBalance() != null ? user.getBalance() : BigDecimal.ZERO;
+        user.setBalance(currentBalance.add(totalValue));
+        userRepository.save(user);
+
         Transaction transaction = new Transaction();
         transaction.setUser(user);
         transaction.setAmount(request.getAmount());
