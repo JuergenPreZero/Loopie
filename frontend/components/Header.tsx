@@ -32,7 +32,7 @@ const Header = () => {
     <>
       <StatusBar backgroundColor="#2563EB" barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.balanceText}>Guthaben: {formattedBalance}</Text>
+        <Text style={styles.balanceText}>{formattedBalance}</Text>
       </View>
     </>
   );
