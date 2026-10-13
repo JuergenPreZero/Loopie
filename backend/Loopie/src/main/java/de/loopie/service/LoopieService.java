@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Main Service for Loopie, handles transactional logic.
@@ -39,7 +40,7 @@ public class LoopieService {
         return total != null ? total : 0;
     }
 
-    public User getUserById(int userId) {
+    public User getUserById(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User "+ userId + " not found"));
     }

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * REST-Controller for the main functions of the application.
@@ -34,7 +35,7 @@ public class LoopieController {
     }
 
     @GetMapping("/balance/{userId}")
-    public ResponseEntity<BigDecimal> getBalance(@PathVariable int userId) {
+    public ResponseEntity<BigDecimal> getBalance(@PathVariable UUID userId) {
         User user =loopieService.getUserById(userId);
         return ResponseEntity.ok(user.getBalance());
     }

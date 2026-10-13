@@ -20,12 +20,6 @@ public class User {
     @Column(nullable = false,length = 50)
     private String lastName;
 
-    @Column(nullable = false)
-    private int age;
-
-    @Column(nullable = false, length = 255)
-    private String address;
-
     @Column(nullable = false,length = 100,unique = true)
     private String email;
 
@@ -65,22 +59,6 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getEmail() {
