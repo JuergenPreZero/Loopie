@@ -35,7 +35,7 @@ public class LoopieService {
      * @param userId An ID meant to identify USER.
      * @return returns USER total amount of items.
      */
-    public int getTotalQuantity(int userId) {
+    public int getTotalQuantity(UUID userId) {
         Integer total = transactionRepository.sumAmountByUserId(userId);
         return total != null ? total : 0;
     }

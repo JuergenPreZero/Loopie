@@ -30,7 +30,7 @@ public class LoopieController {
      * @return HTTP 200 OK with the amount.
      */
     @GetMapping("/quantity/{userId}")
-    public ResponseEntity<Integer> getQuantity(@PathVariable int userId) {
+    public ResponseEntity<Integer> getQuantity(@PathVariable UUID userId) {
         return ResponseEntity.ok(loopieService.getTotalQuantity(userId));
     }
 
