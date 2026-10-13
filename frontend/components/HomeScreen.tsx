@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { fetchTotalQuantity } from './api';
 
-export default function HomeScreen() {
-  const [number, setNumber] = useState<number>(0);
+interface HomeScreenProps {
+  userId: string
+}
 
-  const currentUserId = 1; //Hardcoded UserID!!
+export default function HomeScreen({userId}:HomeScreenProps) {
+  const [number, setNumber] = useState<number>(0);
 
   useEffect(() => {
     const loadQuantity = async () => {
       try {
-        const data = await fetchTotalQuantity(currentUserId);
+        const data = await fetchTotalQuantity(userId);
         setNumber(data);
       } catch (error) {
         console.error("Polling-Fehler:", error);

@@ -11,11 +11,11 @@ import LoginScreen from './components/auth/LoginScreen';
 import RegisterScreen from './components/auth/RegisterScreen';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [authPage, setAuthPage] = useState('landing');
   const [activePage, setActivePage] = useState(1);
 
-  if (!isAuthenticated) {
+  if (!currentUserId) {
     return (
       <SafeAreaProvider>
         <SafeAreaView style={styles.container}>
@@ -28,7 +28,7 @@ export default function App() {
           {authPage === 'login' && (
             <LoginScreen 
               onBack={() => setAuthPage('landing')}
-              onLoginSuccess={() => setIsAuthenticated(true)} 
+              onLoginSuccess={(userId) => setCurrentUserId(userId)} 
               onNavigateRegister={() => setAuthPage('register')}
             />
           )}
@@ -46,18 +46,18 @@ export default function App() {
 
   const renderContent = () => {
     switch (activePage) {
-      case 1: return <HomeScreen />;
+      case 1: return <HomeScreen userId={currentUserId} />;
       case 2: return <DummyPage pageNumber={2} />;
       case 3: return <DummyPage pageNumber={3} />;
       case 4: return <DummyPage pageNumber={4} />;
-      default: return <HomeScreen />;
+      default: return <HomeScreen userId={currentUserId} />;
     }
   };
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <Header />
+        <Header userId={currentUserId} />
         <View style={styles.content}>
           {renderContent()}
         </View>
@@ -68,11 +68,6 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1, 
-    backgroundColor: '#F3F4F6',
-  },
-  content: {
-    flex: 1,
-  },
+  container: { flex: 1, backgroundColor: '#F3F4F6' },
+  content: { flex: 1 },
 });

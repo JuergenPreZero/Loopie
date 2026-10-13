@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, StatusBar } from 'react-native';
 import { fetchUserBalance } from './api';
 
-const Header = () => {
+interface HeadProps {
+  userId:string
+}
+
+const Header = ({userId}: HeadProps) => {
   const [balance, setBalance] = useState<number>(0);
 
   useEffect(() => {
-    const userId = 1;
-
     const loadBalance = async () => {
       try {
         const fetchedBalance = await fetchUserBalance(userId);
