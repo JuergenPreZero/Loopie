@@ -1,2 +1,2 @@
-# Loopie
-Project for the pilot project "Loopie"
+# Loopy
+Project for the pilot project "Loopy"
