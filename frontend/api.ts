@@ -14,7 +14,7 @@ export const registerUser = async (firstName: string, lastName: string, email: s
     });
 
     if (!response.ok) {
-        throw new Error(`Fehler bei der Registrierung (Status: ${response.status})`);
+        throw new Error(`Fehler bei der Registrierung`);
     }
 
     return response.json();
@@ -49,7 +49,7 @@ export const fetchTotalQuantity = async (userId: string): Promise<number> => {
     });
 
     if (!response.ok) {
-        throw new Error(`Fehler beim Aufruf der Menge (Status: ${response.status})`);
+        throw new Error(`Fehler beim Aufruf der Menge`);
     }
 
     return response.json();
@@ -65,8 +65,48 @@ export const fetchUserBalance = async (userId: string): Promise<number> => {
     });
 
     if (!response.ok) {
-        throw new Error(`Fehler beim Aufruf des Geldbetrags (Status: ${response.status})`);
+        throw new Error(`Fehler beim Aufruf des Geldbetrags`);
     }
 
     return response.json();
+};
+
+export const getUserData = async (userId: string) => {
+  try {
+    const response = await fetch(`${LOOPIE_BASE_URL}/user/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Fehler beim Abrufen der Nutzerdaten');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getUserData:', error);
+    throw error;
+  }
+};
+
+export const deleteAccount = async (userId: string) => {
+  try {
+    const response = await fetch(`${LOOPIE_BASE_URL}/user/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Fehler beim Löschen des Kontos (Status: ${response.status})`);
+    }
+    
+    return true; 
+  } catch (error) {
+    console.error('Error in deleteAccount:', error);
+    throw error;
+  }
 };

@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
-import { loginUser } from '../api';
+import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator, Touchable, TouchableOpacity } from 'react-native';
+import { loginUser } from '../../api';
 
 interface LoginScreenProps {
   onBack: () => void;
-  onLoginSuccess: (userId: string) => void; 
+  onLoginSuccess: (userId: string, rememberMe: boolean) => void; 
   onNavigateRegister: () => void;
 }
 
 export default function LoginScreen({ onBack, onLoginSuccess, onNavigateRegister }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
@@ -33,7 +34,7 @@ export default function LoginScreen({ onBack, onLoginSuccess, onNavigateRegister
     setIsLoading(true);
     try {
       const user = await loginUser(email.trim(), password);
-      onLoginSuccess(user.id); 
+      onLoginSuccess(user.id, rememberMe); 
     } catch (error) {
       setErrorMessage('Login fehlgeschlagen. Überprüfe deine E-Mail oder das Passwort.');
       console.error(error);
@@ -65,6 +66,14 @@ export default function LoginScreen({ onBack, onLoginSuccess, onNavigateRegister
         onChangeText={setPassword}
         secureTextEntry
       />
+      <TouchableOpacity
+        style ={styles.checkboxContainer}
+        onPress ={() => setRememberMe(!rememberMe)}
+      ><View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+          {rememberMe && <Text style={styles.checkmark}>✓</Text>}
+        </View>
+        <Text style={styles.checkboxLabel}>Angemeldet bleiben</Text> 
+      </TouchableOpacity>  
 
       {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
 
@@ -87,5 +96,34 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
   input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 15, borderRadius: 5 },
   buttonContainer: { marginBottom: 20 },
-  errorText: { color: 'red', marginBottom: 15, textAlign: 'center', fontWeight: '500' }
+  errorText: { color: 'red', marginBottom: 15, textAlign: 'center', fontWeight: '500' },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: '#6B7280',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    backgroundColor: '#FFF',
+  },
+  checkboxChecked: {
+    backgroundColor: '#2563EB',
+    borderColor: '#2563EB',
+  },
+  checkmark: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  checkboxLabel: {
+    fontSize: 14,
+    color: '#374151',
+  },
 });

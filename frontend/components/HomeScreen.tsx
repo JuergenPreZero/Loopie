@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { fetchTotalQuantity } from './api';
+import { fetchTotalQuantity } from '../api';
 
 interface HomeScreenProps {
   userId: string

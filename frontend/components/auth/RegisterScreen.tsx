@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
-import { registerUser } from '../api';
+import { registerUser } from '../../api';
 
 interface RegisterScreenProps {
   onBack: () => void;

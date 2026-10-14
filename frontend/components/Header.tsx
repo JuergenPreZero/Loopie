@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, StatusBar } from 'react-native';
-import { fetchUserBalance } from './api';
+import { fetchUserBalance } from '../api';
 
 interface HeadProps {
   userId:string
