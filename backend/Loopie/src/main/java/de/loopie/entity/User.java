@@ -2,6 +2,7 @@ package de.loopie.entity;
 
 import jakarta.persistence.*;
 import  java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -34,6 +35,9 @@ public class User {
 
     @Column(nullable = false)
     private boolean isVerified = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions;
 
     public User() {}
 

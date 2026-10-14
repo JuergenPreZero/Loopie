@@ -6,6 +6,7 @@ import de.loopie.entity.User;
 import de.loopie.service.LoopieService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import de.loopie.dto.UserResponseDTO;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -39,6 +40,19 @@ public class LoopieController {
         User user =loopieService.getUserById(userId);
         return ResponseEntity.ok(user.getBalance());
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable UUID userId) {
+        User user = loopieService.getUserById(userId);
+        return ResponseEntity.ok(new UserResponseDTO(user));
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable UUID userId) {
+        loopieService.deleteUserById(userId);
+        return ResponseEntity.noContent().build();
+    }
+
 
     /**
      * Endpoint for registering when a throwIn of any kind has happened.

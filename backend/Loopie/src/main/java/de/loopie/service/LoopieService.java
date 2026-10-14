@@ -45,6 +45,10 @@ public class LoopieService {
                 .orElseThrow(() -> new IllegalArgumentException("User "+ userId + " not found"));
     }
 
+    public void deleteUserById(UUID userId) {
+        userRepository.deleteById(userId);
+    }
+
     /**
      * Checks for existing User and valid UnitID. Calculates the total value.
      * saves values persistently.
