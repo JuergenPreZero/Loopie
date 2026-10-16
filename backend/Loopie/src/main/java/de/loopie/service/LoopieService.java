@@ -21,8 +21,9 @@ public class LoopieService {
     private final UserRepository userRepository;
 
     private static final Map<String, Integer> unitPrices = Map.of(
-            "TennisBall", new Integer("20"),
-            "Example", new Integer("50")
+            "Tennis Ball",20,
+            "Laufschuhe",50,
+            "T-Shirt",35
     );
 
     public LoopieService(TransactionRepository transactionRepository, UserRepository userRepository) {
@@ -32,6 +33,7 @@ public class LoopieService {
 
     /**
      * Gets the total amount of all the units summed by userid.
+     * @param userId An ID meant to identify USER.
      * @param userId An ID meant to identify USER.
      * @return returns USER total amount of items.
      */

@@ -1,14 +1,15 @@
 package de.loopie.controller;
 
 import de.loopie.dto.ThrowInRequest;
+import de.loopie.dto.UserResponseDTO;
 import de.loopie.entity.Transaction;
 import de.loopie.entity.User;
+import de.loopie.repository.TransactionRepository;
 import de.loopie.service.LoopieService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import de.loopie.dto.UserResponseDTO;
 
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,13 +21,15 @@ import java.util.UUID;
 public class LoopieController {
 
     private final LoopieService loopieService;
+    private final TransactionRepository transactionRepository;
 
-    public LoopieController(LoopieService loopieService) {
+    public LoopieController(LoopieService loopieService, TransactionRepository transactionRepository) {
         this.loopieService = loopieService;
+        this.transactionRepository = transactionRepository;
     }
-
     /**
      * Endpoint for calling USERS current amount of items.
+     *
      * @param userId An ID meant to identify USER.
      * @return HTTP 200 OK with the amount.
      */
@@ -37,7 +40,7 @@ public class LoopieController {
 
     @GetMapping("/balance/{userId}")
     public ResponseEntity<Integer> getBalance(@PathVariable UUID userId) {
-        User user =loopieService.getUserById(userId);
+        User user = loopieService.getUserById(userId);
         return ResponseEntity.ok(user.getBalance());
     }
 
@@ -53,11 +56,16 @@ public class LoopieController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/user/{userId}/transactions")
+    public ResponseEntity<List<Transaction>> getUserTransactions(@PathVariable UUID userId) {
+        return ResponseEntity.ok(transactionRepository.findByUser_IdOrderByTimeStampDesc(userId));
+    }
 
     /**
      * Endpoint for registering when a throwIn of any kind has happened.
+     *
      * @param request Data object send by iot
-     * @return HTTP 200 OK with the save data {@link Transaction}
+     * @return HTTP 200 OK with the saved data {@link Transaction}
      */
     @PostMapping("/throw-in")
     public ResponseEntity<Transaction> registerThrowIn(@RequestBody ThrowInRequest request) {
