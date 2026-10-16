@@ -36,7 +36,7 @@ public class LoopieController {
     }
 
     @GetMapping("/balance/{userId}")
-    public ResponseEntity<BigDecimal> getBalance(@PathVariable UUID userId) {
+    public ResponseEntity<Integer> getBalance(@PathVariable UUID userId) {
         User user =loopieService.getUserById(userId);
         return ResponseEntity.ok(user.getBalance());
     }

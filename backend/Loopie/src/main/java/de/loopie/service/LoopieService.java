@@ -20,9 +20,9 @@ public class LoopieService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
 
-    private static final Map<String, BigDecimal> unitPrices = Map.of(
-            "TennisBall", new BigDecimal("0.20"),
-            "Example", new BigDecimal("0.50")
+    private static final Map<String, Integer> unitPrices = Map.of(
+            "TennisBall", new Integer("20"),
+            "Example", new Integer("50")
     );
 
     public LoopieService(TransactionRepository transactionRepository, UserRepository userRepository) {
@@ -57,20 +57,20 @@ public class LoopieService {
      */
     @Transactional
     public Transaction processThrowIn(ThrowInRequest request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User " + request.getUserId() + " not found"));
+        User user = userRepository.findByPublicId(request.getPublicId())
+                .orElseThrow(() -> new IllegalArgumentException("User with Public ID " + request.getPublicId() + " not found"));
 
         if (request.getUnitId() == null || !unitPrices.containsKey(request.getUnitId())) {
             throw new IllegalArgumentException("Unit ID "+ request.getUnitId() + " does not exist");
         }
 
         //Calculate total value of item(s)
-        BigDecimal unitPrice = unitPrices.getOrDefault(request.getUnitId(), BigDecimal.ZERO);
-        BigDecimal totalValue = unitPrice.multiply(new BigDecimal(request.getAmount()));
+        int unitPrice = unitPrices.getOrDefault(request.getUnitId(), 0);
+        int totalValue = unitPrice * (request.getAmount());
 
         //adds amount of transaction to total balance
-        BigDecimal currentBalance = user.getBalance() != null ? user.getBalance() : BigDecimal.ZERO;
-        user.setBalance(currentBalance.add(totalValue));
+        int currentBalance = user.getBalance();
+        user.setBalance(currentBalance + totalValue);
         userRepository.save(user);
 
         Transaction transaction = new Transaction();

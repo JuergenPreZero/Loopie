@@ -15,6 +15,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false, length = 8, unique = true)
+    private String publicId;
+
     @Column(nullable = false,length = 50)
     private String firstName;
 
@@ -24,8 +27,8 @@ public class User {
     @Column(nullable = false,length = 100,unique = true)
     private String email;
 
-    @Column(nullable = false, precision = 10,scale = 2)
-    private BigDecimal balance = BigDecimal.ZERO;
+    @Column(nullable = false)
+    private int balance;
 
     @Column(nullable = false,length = 100)
     private String password;
@@ -47,6 +50,14 @@ public class User {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 
     public String getFirstName() {
@@ -73,11 +84,11 @@ public class User {
         this.email = email;
     }
 
-    public BigDecimal getBalance() {
+    public int getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(int balance) {
         this.balance = balance;
     }
 

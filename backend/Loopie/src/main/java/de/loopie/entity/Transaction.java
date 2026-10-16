@@ -22,7 +22,7 @@ public class Transaction {
     private Integer amount;
 
     @Column(name = "transaction_value", nullable = false)
-    private BigDecimal value;
+    private int value;
 
     @Column(nullable = false)
     private String unitId;
@@ -50,11 +50,11 @@ public class Transaction {
         this.unitId = unitId;
     }
 
-    public BigDecimal getValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(BigDecimal value) {
+    public void setValue(int value) {
         this.value = value;
     }
 

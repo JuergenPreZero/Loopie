@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -34,6 +36,13 @@ public class AuthService {
         newUser.setLastName(request.getLastName());
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        String generatedPublicId;
+        do {
+            generatedPublicId = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        } while (userRepository.findByPublicId(generatedPublicId).isPresent());
+
+        newUser.setPublicId(generatedPublicId);
 
         User savedUser = userRepository.save(newUser);
         return new UserResponseDTO(savedUser);
