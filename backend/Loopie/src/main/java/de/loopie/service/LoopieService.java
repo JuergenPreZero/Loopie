@@ -63,24 +63,24 @@ public class LoopieService {
                 .orElseThrow(() -> new IllegalArgumentException("User with Public ID " + request.getPublicId() + " not found"));
 
         if (request.getUnitId() == null || !unitPrices.containsKey(request.getUnitId())) {
-            throw new IllegalArgumentException("Unit ID "+ request.getUnitId() + " does not exist");
+            throw new IllegalArgumentException("Unit ID " + request.getUnitId() + " does not exist");
         }
 
-        //Calculate total value of item(s)
         int unitPrice = unitPrices.getOrDefault(request.getUnitId(), 0);
-        int totalValue = unitPrice * (request.getAmount());
-
-        //adds amount of transaction to total balance
-        int currentBalance = user.getBalance();
-        user.setBalance(currentBalance + totalValue);
-        userRepository.save(user);
+        int totalValue = unitPrice * request.getAmount();
 
         Transaction transaction = new Transaction();
         transaction.setUser(user);
         transaction.setAmount(request.getAmount());
         transaction.setValue(totalValue);
         transaction.setUnitId(request.getUnitId());
+        Transaction savedTransaction = transactionRepository.save(transaction);
 
-        return transactionRepository.save(transaction);
+        Long totalBalance = transactionRepository.sumBalanceByUserId(user.getId());
+
+        user.setBalance(totalBalance != null ? totalBalance.intValue() : 0);
+        userRepository.save(user);
+
+        return savedTransaction;
     }
 }

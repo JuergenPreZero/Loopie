@@ -14,4 +14,7 @@ import java.util.UUID;
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.user.id = :userId")
     Integer sumAmountByUserId(@Param("userId")UUID userId);
-    List<Transaction> findByUser_IdOrderByTimeStampDesc(UUID userId);}
+    @Query("SELECT SUM(t.value) FROM Transaction t WHERE t.user.id = :userId")
+    Long sumBalanceByUserId(@Param("userId") UUID userId);
+    List<Transaction> findByUser_IdOrderByTimeStampDesc(UUID userId);
+}
