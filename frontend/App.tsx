@@ -5,12 +5,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Header from './components/Header';
 import Navbar from './components/Navbar'; 
-import HomeScreen from './components/HomeScreen';
-import ProfileScreen from './components/ProfileScreen'; 
+import HomeScreen from './components/screen/HomeScreen';
+import ProfileScreen from './components/screen/ProfileScreen'; 
+import QrScreen from './components/screen/QrScreen';
 import DummyPage from './components/DummyPage'; 
 import LandingScreen from './components/auth/LandingScreen';
 import LoginScreen from './components/auth/LoginScreen';
 import RegisterScreen from './components/auth/RegisterScreen';
+import HistoryScreen from './components/screen/HistoryScreen';
 
 const USER_STORAGE_KEY = '@loopie_user_id';
 
@@ -98,11 +100,18 @@ export default function App() {
 
   const renderContent = () => {
     switch (activePage) {
-      case 1: return <HomeScreen userId={currentUserId} />;
-      case 2: return <DummyPage pageNumber={2} />;
-      case 3: return <DummyPage pageNumber={3} />;
-      case 4: return <ProfileScreen userId={currentUserId} onLogout={handleLogout} />;
-      default: return <HomeScreen userId={currentUserId} />;
+      case 1: 
+        return <HomeScreen userId={currentUserId} />;
+      case 2: 
+        return <HistoryScreen userId={currentUserId} />;
+      case 3: 
+        return <QrScreen userId={currentUserId} />;
+      case 4: 
+        return <DummyPage pageNumber={4} />;
+      case 5: 
+        return <ProfileScreen userId={currentUserId} onLogout={handleLogout} />;
+      default: 
+        return <HomeScreen userId={currentUserId} />;
     }
   };
 

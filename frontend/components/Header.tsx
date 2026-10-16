@@ -28,7 +28,7 @@ const Header = ({userId}: HeadProps) => {
     return () => clearInterval(interval);
   }, []);
 
-  const formattedBalance = `${balance.toFixed(2).replace('.', ',')} €`;
+  const formattedBalance = `ReCoins: ${balance}`;
 
   return (
     <>

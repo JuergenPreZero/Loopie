@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { getUserData, deleteAccount } from '../api'; // deleteAccount muss in der api.ts existieren
+import { getUserData, deleteAccount } from '../../api'; 
 
 interface ProfileScreenProps {
   userId: string;
@@ -11,6 +11,7 @@ interface UserProfile {
   firstName: string;
   lastName: string;
   email: string;
+  publicId: string;
 }
 
 export default function ProfileScreen({ userId, onLogout }: ProfileScreenProps) {
@@ -71,7 +72,7 @@ export default function ProfileScreen({ userId, onLogout }: ProfileScreenProps) 
 
       <View style={styles.infoBox}>
         <Text style={styles.label}>Nutzer-ID:</Text>
-        <Text style={styles.text}>{userId}</Text>
+        <Text style={styles.text}>{user?.publicId}</Text>
       </View>
 
       <View style={styles.buttonContainer}>

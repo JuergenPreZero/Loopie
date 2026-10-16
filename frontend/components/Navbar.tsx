@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { Home01Icon, UserIcon, QrCodeIcon } from '@hugeicons/core-free-icons';
+import { Home01Icon, UserIcon, QrCodeIcon, HistoryIcon, Location04Icon } from '@hugeicons/core-free-icons';
 
 interface NavbarProps {
   activePage: number;
@@ -20,29 +20,37 @@ const Navbar = ({ activePage, setActivePage }: NavbarProps) => {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={() => setActivePage(2)}>
-        <Text style={[styles.text, activePage === 2 && styles.activeText]}>S2</Text>
+        <HugeiconsIcon 
+        icon={HistoryIcon}
+        size={24}
+        color={activePage === 2 ? "#2563EB" : "#6B7280"}
+        />
       </TouchableOpacity>
 
       <TouchableOpacity 
-        style={[styles.qrButton, activePage === 5 && styles.activeQrButton]} 
-        onPress={() => setActivePage(5)}
+        style={[styles.qrButton, activePage === 3 && styles.activeQrButton]} 
+        onPress={() => setActivePage(3)}
       >
         <HugeiconsIcon 
           icon={QrCodeIcon}
           size={26} 
-          color={activePage === 5 ? "#FFFFFF" : "#2563EB"} 
+          color={activePage === 3 ? "#FFFFFF" : "#2563EB"} 
         />
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={() => setActivePage(3)}>
-        <Text style={[styles.text, activePage === 3 && styles.activeText]}>S3</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={() => setActivePage(4)}>
         <HugeiconsIcon 
+        icon={Location04Icon}
+        size={24}
+        color={activePage === 4 ? "#2563EB" : "#6B7280"}
+        />
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={() => setActivePage(5)}>
+        <HugeiconsIcon 
           icon={UserIcon}
           size={24} 
-          color={activePage === 4 ? "#2563EB" : "#6B7280"} 
+          color={activePage === 5 ? "#2563EB" : "#6B7280"} 
         />
       </TouchableOpacity>
     </View>
