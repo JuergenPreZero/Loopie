@@ -1,82 +1,93 @@
 const LOOPIE_BASE_URL = 'http://localhost:8080/api/loopie';
 const AUTH_BASE_URL = 'http://localhost:8080/api/auth';
 
-export interface BackendTransaction{
-  id:number;
+export interface BackendTransaction {
+  id: number;
   amount: number;
-  unitId:String;
+  unitId: String;
   value: number;
-  timeStamp: string;  
+  timeStamp: string;
+}
+
+export interface UpdateUserData {
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 // Auth
 
-export const registerUser = async (firstName: string, lastName: string, email: string, password: string) => {
-    const response = await fetch(`${AUTH_BASE_URL}/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({ firstName, lastName, email, password }),
-    });
+export const registerUser = async (
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string
+) => {
+  const response = await fetch(`${AUTH_BASE_URL}/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ firstName, lastName, email, password }),
+  });
 
-    if (!response.ok) {
-        throw new Error(`Fehler bei der Registrierung`);
-    }
+  if (!response.ok) {
+    throw new Error(`Fehler bei der Registrierung`);
+  }
 
-    return response.json();
+  return response.json();
 };
 
-export const loginUser = async (email:string, password:string) => {
-    const response = await fetch(`${AUTH_BASE_URL}/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({email, password}),
-    });
+export const loginUser = async (email: string, password: string) => {
+  const response = await fetch(`${AUTH_BASE_URL}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  });
 
-    if (!response.ok) {
-        throw new Error(`Fehler bei dem Login bitte überprüf die Daten.`);
-    }
+  if (!response.ok) {
+    throw new Error(`Fehler bei dem Login bitte überprüf die Daten.`);
+  }
 
-    return response.json();
-}
+  return response.json();
+};
 
 // Main Functions
 
 export const fetchTotalQuantity = async (userId: string): Promise<number> => {
-    const response = await fetch(`${LOOPIE_BASE_URL}/quantity/${userId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-    });
+  const response = await fetch(`${LOOPIE_BASE_URL}/quantity/${userId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  });
 
-    if (!response.ok) {
-        throw new Error(`Fehler beim Aufruf der Menge`);
-    }
+  if (!response.ok) {
+    throw new Error(`Fehler beim Aufruf der Menge`);
+  }
 
-    return response.json();
+  return response.json();
 };
 
 export const fetchUserBalance = async (userId: string): Promise<number> => {
-    const response = await fetch(`${LOOPIE_BASE_URL}/balance/${userId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-    });
+  const response = await fetch(`${LOOPIE_BASE_URL}/balance/${userId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  });
 
-    if (!response.ok) {
-        throw new Error(`Fehler beim Aufruf des Geldbetrags`);
-    }
+  if (!response.ok) {
+    throw new Error(`Fehler beim Aufruf des Geldbetrags`);
+  }
 
-    return response.json();
+  return response.json();
 };
 
 export const getUserData = async (userId: string) => {
@@ -99,6 +110,29 @@ export const getUserData = async (userId: string) => {
   }
 };
 
+export const updateUserProfile = async (userId: string, data: UpdateUserData) => {
+  try {
+    const response = await fetch(`${LOOPIE_BASE_URL}/user/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || 'Fehler beim Aktualisieren der Nutzerdaten');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error in updateUserProfile:', error);
+    throw error;
+  }
+};
+
 export const deleteAccount = async (userId: string) => {
   try {
     const response = await fetch(`${LOOPIE_BASE_URL}/user/${userId}`, {
@@ -111,20 +145,22 @@ export const deleteAccount = async (userId: string) => {
     if (!response.ok) {
       throw new Error(`Fehler beim Löschen des Kontos (Status: ${response.status})`);
     }
-    
-    return true; 
+
+    return true;
   } catch (error) {
     console.error('Error in deleteAccount:', error);
     throw error;
   }
 };
 
-export const fetchUserTransactions = async (userId: string): Promise<BackendTransaction[]> => {
+export const fetchUserTransactions = async (
+  userId: string
+): Promise<BackendTransaction[]> => {
   const response = await fetch(`${LOOPIE_BASE_URL}/user/${userId}/transactions`);
-  
+
   if (!response.ok) {
     throw new Error('Fehler beim Laden der Transaktionen');
   }
-  
+
   return await response.json();
 };

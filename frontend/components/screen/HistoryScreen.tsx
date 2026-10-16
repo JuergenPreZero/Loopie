@@ -12,19 +12,34 @@ export default function HistoryScreen({ userId }: HistoryScreenProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadTransactions = async () => {
+    let isMounted = true;
+    const loadTransactions = async (isInitial = false) => {
+      if (!userId) return;
+      if (isInitial) setIsLoading(true);
+
       try {
-        if (!userId) return;
         const data = await fetchUserTransactions(userId);
-        setTransactions(data);
+        if (isMounted) {
+          setTransactions(data);
+        }
       } catch (error) {
         console.error("Fehler beim Abrufen der Transaktionen:", error);
       } finally {
-        setIsLoading(false);
+        if (isInitial && isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    loadTransactions();
+    loadTransactions(true);
+    const intervalId = setInterval(() => {
+      loadTransactions(false);
+    }, 3000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
   }, [userId]);
 
   return (
@@ -32,7 +47,7 @@ export default function HistoryScreen({ userId }: HistoryScreenProps) {
       <View style={styles.header}>
         <Text style={styles.title}>Verlauf</Text>
         <Text style={styles.subtitle}>
-          Deine bisherigen Abgaben und Pfand-Gutschriften.
+          Deine bisherigen Abgaben.
         </Text>
       </View>
 

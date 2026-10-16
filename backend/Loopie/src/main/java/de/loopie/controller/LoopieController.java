@@ -1,6 +1,7 @@
 package de.loopie.controller;
 
 import de.loopie.dto.ThrowInRequest;
+import de.loopie.dto.UpdateUserRequest;
 import de.loopie.dto.UserResponseDTO;
 import de.loopie.entity.Transaction;
 import de.loopie.entity.User;
@@ -71,5 +72,17 @@ public class LoopieController {
     public ResponseEntity<Transaction> registerThrowIn(@RequestBody ThrowInRequest request) {
         Transaction savedTransaction = loopieService.processThrowIn(request);
         return ResponseEntity.ok(savedTransaction);
+    }
+
+    @PutMapping("/user/{userId}")
+    public ResponseEntity<?> updateUserProfile(
+            @PathVariable UUID userId,
+            @RequestBody UpdateUserRequest request) {
+        try {
+            UserResponseDTO updated = loopieService.updateUserProfile(userId, request);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

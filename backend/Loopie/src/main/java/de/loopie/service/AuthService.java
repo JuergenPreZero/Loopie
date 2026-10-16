@@ -9,12 +9,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.security.SecureRandom;
+import java.util.Locale;
 
 @Service
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private static final String CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final int PUBLIC_ID_LENGTH = 8;
+    private final SecureRandom secureRandom = new SecureRandom();
 
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -23,7 +28,8 @@ public class AuthService {
 
     @Transactional
     public UserResponseDTO registerUser(RegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        String normalizedEmail = request.getEmail().trim().toLowerCase();
+        if (userRepository.findByEmail(normalizedEmail).isPresent()) {
             throw new IllegalArgumentException("This E-mail already exists");
         }
 
@@ -32,15 +38,15 @@ public class AuthService {
         }
 
         User newUser = new User();
-        newUser.setFirstName(request.getFirstName());
-        newUser.setLastName(request.getLastName());
-        newUser.setEmail(request.getEmail());
+        newUser.setFirstName(request.getFirstName().trim());
+        newUser.setLastName(request.getLastName().trim());
+        newUser.setEmail(normalizedEmail);
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
 
         String generatedPublicId;
         do {
-            generatedPublicId = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        } while (userRepository.findByPublicId(generatedPublicId).isPresent());
+            generatedPublicId = generatePublicId();
+        } while (userRepository.existsByPublicId(generatedPublicId));
 
         newUser.setPublicId(generatedPublicId);
 
@@ -49,12 +55,20 @@ public class AuthService {
     }
 
     public UserResponseDTO login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.getEmail().trim().toLowerCase(Locale.ROOT))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid E-Mail or Password."));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Invalid E-Mail or Password.");
         }
         return new UserResponseDTO(user);
+    }
+
+    private String generatePublicId() {
+        StringBuilder sb = new StringBuilder(PUBLIC_ID_LENGTH);
+        for (int i = 0; i < PUBLIC_ID_LENGTH; i++) {
+            sb.append(CHARACTERS.charAt(secureRandom.nextInt(CHARACTERS.length())));
+        }
+        return sb.toString();
     }
 }

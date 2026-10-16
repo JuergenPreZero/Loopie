@@ -11,7 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
-
+import de.loopie.dto.UpdateUserRequest;
+import de.loopie.dto.UserResponseDTO;
+import java.util.Locale;
+import java.util.Optional;
 /**
  * Main Service for Loopie, handles transactional logic.
  */
@@ -82,5 +85,35 @@ public class LoopieService {
         userRepository.save(user);
 
         return savedTransaction;
+    }
+
+    @Transactional
+    public UserResponseDTO updateUserProfile(UUID userId, UpdateUserRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User " + userId + " nicht gefunden"));
+
+        if (request.getFirstName() == null || request.getFirstName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vorname darf nicht leer sein.");
+        }
+        if (request.getLastName() == null || request.getLastName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Nachname darf nicht leer sein.");
+        }
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("E-Mail darf nicht leer sein.");
+        }
+
+        String normalizedEmail = request.getEmail().trim().toLowerCase(Locale.ROOT);
+
+        Optional<User> existingUser = userRepository.findByEmail(normalizedEmail);
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
+            throw new IllegalArgumentException("Diese E-Mail-Adresse wird bereits verwendet.");
+        }
+
+        user.setFirstName(request.getFirstName().trim());
+        user.setLastName(request.getLastName().trim());
+        user.setEmail(normalizedEmail);
+
+        User savedUser = userRepository.save(user);
+        return new UserResponseDTO(savedUser);
     }
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
 import { registerUser } from '../../api';
+import { validator } from '../auth/UserValidator';
 
 interface RegisterScreenProps {
   onBack: () => void;
@@ -9,41 +10,35 @@ interface RegisterScreenProps {
 }
 
 export default function RegisterScreen({ onBack, onRegisterSuccess, onNavigateLogin }: RegisterScreenProps) {
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleRegister = async () => {
-    setErrorMessage(null); 
+    setErrorMessage(null);
 
-    const nameParts = fullName.trim().split(/\s+/);
-    if (nameParts.length !== 2) {
-      setErrorMessage('Bitte gib genau einen Vornamen und einen Nachnamen ein.');
+    // Einheitliche Prüfung über dieselbe Validator-Instanz
+    const error =
+      validator.validateName(firstName, 'Vorname') ||
+      validator.validateName(lastName, 'Nachname') ||
+      validator.validateEmail(email) ||
+      validator.validatePassword(password);
+
+    if (error) {
+      setErrorMessage(error);
       return;
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      setErrorMessage('Bitte gib eine gültige E-Mail-Adresse ein.');
-      return;
-    }
-
-    if (password.length < 8){
-        setErrorMessage('Passwort muss mindestens 8 Zeichen lang sein.')
-        return;
-    }
-
-    const [firstName, lastName] = nameParts;
 
     setIsLoading(true);
     try {
-      await registerUser(firstName, lastName, email, password);
+      await registerUser(firstName.trim(), lastName.trim(), email.trim().toLowerCase(), password);
       onRegisterSuccess();
-    } catch (error) {
+    } catch (err) {
       setErrorMessage('Registrierung fehlgeschlagen. E-Mail existiert bereits.');
-      console.error(error);
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -54,26 +49,32 @@ export default function RegisterScreen({ onBack, onRegisterSuccess, onNavigateLo
       <View style={styles.backButton}>
         <Button title="Zurück" onPress={onBack} />
       </View>
-      
+
       <Text style={styles.title}>Konto erstellen</Text>
-      
-      <TextInput 
-        style={styles.input} 
-        placeholder="Vor- und Nachname" 
-        value={fullName}
-        onChangeText={setFullName}
+
+      <TextInput
+        style={styles.input}
+        placeholder="Vorname"
+        value={firstName}
+        onChangeText={setFirstName}
       />
-      <TextInput 
-        style={styles.input} 
-        placeholder="E-Mail" 
+      <TextInput
+        style={styles.input}
+        placeholder="Nachname"
+        value={lastName}
+        onChangeText={setLastName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="E-Mail"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Passwort" 
+      <TextInput
+        style={styles.input}
+        placeholder="Passwort"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -100,5 +101,5 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
   input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 15, borderRadius: 5 },
   buttonContainer: { marginBottom: 20 },
-  errorText: { color: 'red', marginBottom: 15, textAlign: 'center', fontWeight: '500' }
+  errorText: { color: 'red', marginBottom: 15, textAlign: 'center', fontWeight: '500' },
 });
