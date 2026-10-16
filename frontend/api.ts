@@ -1,6 +1,14 @@
 const LOOPIE_BASE_URL = 'http://localhost:8080/api/loopie';
 const AUTH_BASE_URL = 'http://localhost:8080/api/auth';
 
+export interface BackendTransaction{
+  id:number;
+  amount: number;
+  unitId:String;
+  value: number;
+  timeStamp: string;  
+}
+
 // Auth
 
 export const registerUser = async (firstName: string, lastName: string, email: string, password: string) => {
@@ -109,4 +117,14 @@ export const deleteAccount = async (userId: string) => {
     console.error('Error in deleteAccount:', error);
     throw error;
   }
+};
+
+export const fetchUserTransactions = async (userId: string): Promise<BackendTransaction[]> => {
+  const response = await fetch(`${LOOPIE_BASE_URL}/user/${userId}/transactions`);
+  
+  if (!response.ok) {
+    throw new Error('Fehler beim Laden der Transaktionen');
+  }
+  
+  return await response.json();
 };

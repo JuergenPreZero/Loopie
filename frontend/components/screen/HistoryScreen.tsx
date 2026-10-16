@@ -1,28 +1,68 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import TransactionItem from '../TransactionItem';
+import { fetchUserTransactions, BackendTransaction } from '../../api'; 
 
 interface HistoryScreenProps {
   userId: string;
 }
 
 export default function HistoryScreen({ userId }: HistoryScreenProps) {
+  const [transactions, setTransactions] = useState<BackendTransaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadTransactions = async () => {
+      try {
+        if (!userId) return;
+        const data = await fetchUserTransactions(userId);
+        setTransactions(data);
+      } catch (error) {
+        console.error("Fehler beim Abrufen der Transaktionen:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTransactions();
+  }, [userId]);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Verlauf</Text>
         <Text style={styles.subtitle}>
-          Übersicht deiner bisherigen Abgaben und Pfand-Gutschriften.
+          Deine bisherigen Abgaben und Pfand-Gutschriften.
         </Text>
       </View>
 
-      <View style={styles.placeholderContainer}>
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyTitle}>Noch keine Abgaben</Text>
-          <Text style={styles.emptySubtitle}>
-            Sobald du Flaschen oder Dosen an einer Station einwirfst, erscheinen sie hier im Verlauf.
-          </Text>
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#2563EB" style={{ marginTop: 40 }} />
+      ) : transactions.length > 0 ? (
+        <FlatList
+          data={transactions}
+          keyExtractor={(item) => item.id.toString()} 
+          renderItem={({ item }) => (
+            <TransactionItem
+              itemType={item.unitId}
+              amount={item.amount}
+              value={item.value}
+              date={item.timeStamp}
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContainer}
+        />
+      ) : (
+        <View style={styles.placeholderContainer}>
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>Noch keine Abgaben</Text>
+            <Text style={styles.emptySubtitle}>
+              Noch nichts abgegeben, mache jetzt den ersten Schritt in eine bessere Zukunft.
+            </Text>
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 }
@@ -35,7 +75,7 @@ const styles = StyleSheet.create({
     paddingTop: 24,
   },
   header: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   title: {
     fontSize: 26,
@@ -47,6 +87,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#64748B',
     lineHeight: 20,
+  },
+  listContainer: {
+    paddingBottom: 24,
   },
   placeholderContainer: {
     flex: 1,
